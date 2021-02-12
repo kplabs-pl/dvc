@@ -14,6 +14,9 @@ def get_connection(conn_func, *args, **kwargs):
     except Exception:
         conn.close()
         raise
+    except BaseException:  # e.g. IteratorStop
+        pool.release(conn)
+        raise
     else:
         pool.release(conn)
 
