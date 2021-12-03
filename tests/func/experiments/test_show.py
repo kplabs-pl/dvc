@@ -20,6 +20,7 @@ def test_show_simple(tmp_dir, scm, dvc, exp_stage):
     assert dvc.experiments.show()["workspace"] == {
         "baseline": {
             "data": {
+                "deps": {"copy.py": "561f068574ab2a132d304dca3dd6510d"},
                 "metrics": {"metrics.yaml": {"data": {"foo": 1}}},
                 "params": {"params.yaml": {"data": {"foo": 1}}},
                 "queued": False,
@@ -45,6 +46,7 @@ def test_show_experiment(tmp_dir, scm, dvc, exp_stage, workspace):
 
     expected_baseline = {
         "data": {
+            "deps": {"copy.py": "561f068574ab2a132d304dca3dd6510d"},
             "metrics": {"metrics.yaml": {"data": {"foo": 1}}},
             "params": {"params.yaml": {"data": {"foo": 1}}},
             "queued": False,
@@ -376,6 +378,7 @@ def test_show_running_workspace(tmp_dir, scm, dvc, exp_stage, capsys):
     assert dvc.experiments.show()["workspace"] == {
         "baseline": {
             "data": {
+                "deps": {"copy.py": "561f068574ab2a132d304dca3dd6510d"},
                 "metrics": {"metrics.yaml": {"data": {"foo": 1}}},
                 "params": {"params.yaml": {"data": {"foo": 1}}},
                 "queued": False,
@@ -500,25 +503,23 @@ def test_show_csv(tmp_dir, scm, dvc, exp_stage, capsys):
     capsys.readouterr()
     assert main(["exp", "show", "--csv"]) == 0
     cap = capsys.readouterr()
+    assert "Experiment,rev,typ,Created,parent" in cap.out
+    assert "copy.py,metrics.yaml:foo,params.yaml:foo" in cap.out
+    assert ",workspace,baseline,,,561f068,3,3" in cap.out
     assert (
-        "Experiment,rev,typ,Created,parent,metrics.yaml:foo,params.yaml:foo"
-        in cap.out
-    )
-    assert ",workspace,baseline,,,3,3" in cap.out
-    assert (
-        "master,{},baseline,{},,1,1".format(
+        "master,{},baseline,{},,561f068,1,1".format(
             baseline_rev[:7], _get_rev_isotimestamp(baseline_rev)
         )
         in cap.out
     )
     assert (
-        "{},{},branch_base,{},,2,2".format(
+        "{},{},branch_base,{},,561f068,2,2".format(
             ref_info1.name, rev1[:7], _get_rev_isotimestamp(rev1)
         )
         in cap.out
     )
     assert (
-        "{},{},branch_commit,{},,3,3".format(
+        "{},{},branch_commit,{},,561f068,3,3".format(
             ref_info2.name, rev2[:7], _get_rev_isotimestamp(rev2)
         )
         in cap.out
@@ -559,7 +560,6 @@ def test_show_only_changed(tmp_dir, dvc, scm, capsys):
     assert main(["exp", "show"]) == 0
     cap = capsys.readouterr()
 
-    print(cap)
     assert "bar" in cap.out
 
     capsys.readouterr()
