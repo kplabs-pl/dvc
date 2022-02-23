@@ -407,7 +407,7 @@ class Lockfile(FileMixin):
                 logger.info("Updating lock file '%s'", self.relpath)
 
             data["stages"].update(stage_data)
-            rec_sort(data["stages"])
+            data["stages"] = rec_sort(data["stages"])
 
         if modified:
             self.repo.scm_context.track_file(self.relpath)
