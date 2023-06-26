@@ -246,8 +246,8 @@ class StageCache:
             # check if any build cache already exists for this key
             # TODO: check if MaxKeys=1 or something like that applies
             # or otherwise this will take a lot of time!
-            if to_fs.exists(key) and first(to_fs.find(key)):
-                continue
+            # if to_fs.exists(key) and first(to_fs.find(key)):
+            #     continue
 
             src_name = from_fs.path.name(src)
             parent_name = from_fs.path.name(from_fs.path.parent(src))
