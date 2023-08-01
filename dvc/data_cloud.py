@@ -75,6 +75,9 @@ class DataCloud:
                     config["version_aware"] = True
 
             fs = cls(**config)
+            # a workaround for establishing too many connections resulting in "Too many open files" error
+            fs.fs_args["skip_instance_cache"] = False
+
             config["tmp_dir"] = self.repo.site_cache_dir
             if self.repo.data_index is not None:
                 index = self.repo.data_index.view(("remote", name))
